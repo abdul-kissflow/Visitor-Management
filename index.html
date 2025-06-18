@@ -25,29 +25,170 @@
             /* Center horizontally */
             margin-top: 40px;
         }
-        
-        #formIframe{
+
+        .logo {
+            max-width: 150px;
+            /* Adjust as needed */
+            height: auto;
+            margin-bottom: 20px;
+            /* Space between logo and button */
+        }
+
+        .open-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #EC1F25;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .open-btn:hover {
+            background-color: darkred;
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
             width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 10px;
+            background-color: #EC1F25;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .close {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
     <div class="button-container">
-         <iframe 
-            id="formIframe"
-            src="https://development-priestly.kissflow.com/public/Process/Pff74ffc14-06b5-4983-9ef8-05d1ccd60aa7"
-        ></iframe>
+        <img src="images\PDI square 2021.jpg" alt="Logo" class="logo">
+        <button class="open-btn" onclick="openModal()">SIGN IN</button>
+        <button id="enableAccess">Enable Cookie Access</button>
     </div>
+
+
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Welcome to PDI</span>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                
+                <iframe id="formIframe"
+                    data-src=https://development-priestly.kissflow.com/public/form/Pfe1548711-4791-45f7-8344-d06730047fda
+                    src="">
+                    Loading…
+                </iframe>
+            </div>
+        </div>
+    </div>
+
     <script>
-      window.addEventListener("load", function () {
-            // Set the height of the iframe to match its content
-            // var iframe = document.getElementById("formIframe");
-            // iframe.requestStorageAccess();
-            document.requestStorageAccess();
-      });   
+        function openModal() {
+            const iframe = document.getElementById("formIframe");
+            // Force reload of the iframe by resetting src
+            const originalSrc = iframe.getAttribute("data-src");
+            iframe.src = originalSrc;
+
+            document.getElementById("formModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("formModal").style.display = "none";
+        }
+
+        // Optional: close modal when clicking outside of it
+        window.onclick = function (event) {
+            const modal = document.getElementById("formModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        async function enableCookieAccess() {
+      if ('hasStorageAccess' in document) {
+        const hasAccess = await document.hasStorageAccess();
+
+        if (hasAccess) {
+          console.log("Already has storage access. Proceed with login/session.");
+          checkSession(); // or use cookies
+          return;
+        }
+
+        try {
+          await document.requestStorageAccess();
+          console.log("Storage access granted!");
+          checkSession();
+        } catch (e) {
+          console.warn("Storage access denied:", e);
+        }
+      } else {
+        console.log("Browser does not support Storage Access API.");
+        checkSession(); // fallback
+      }
+    }
+
+    function checkSession() {
+      // Example: check for existing session cookie
+      if (document.cookie.includes("session=")) {
+        console.log("Session cookie found:", document.cookie);
+      } else {
+        console.log("No session found. User needs to log in.");
+      }
+    }
+
+    document.getElementById("enableAccess").addEventListener("click", enableCookieAccess);
     </script>
-</div>
+
+    <!--  https://development-priestly.kissflow.com/public/Process/Pff74ffc14-06b5-4983-9ef8-05d1ccd60aa7
+ https://development-priestly.kissflow.com/public/form/Pfe1548711-4791-45f7-8344-d06730047fda -->
 </body>
 
 </html>
